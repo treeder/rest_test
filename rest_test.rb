@@ -1,12 +1,13 @@
 require 'sinatra'
 
-enable :sessions
+# enable :sessions
+set :ip_session, {}
 
 get '/' do
-  'Hello world!'
+  "This is the Rest Test. Send requests to /code/X where X is the code you want returned."
 end
 
-get '/code/:code' do
+def code(params)
   code = params[:code].to_i
   if params[:switch_after]
     sa = params[:switch_after].to_i
@@ -14,15 +15,23 @@ get '/code/:code' do
     return cret(400, "switch_after must be greater than 1") if sa < 2
     return cret(400, "switch_to must be valid http code") if st < 100 || st >= 600
     s = "code_#{code}_count"
-    session[s] ||= 0
-    session[s] += 1
-    puts "#{s}: #{session[s]}"
-    if session[s] >= sa
-      session[s] = 0
+    settings.ip_session[s] ||= 0
+    settings.ip_session[s] += 1
+    puts "#{s}: #{settings.ip_session[s]}"
+    if settings.ip_session[s] >= sa
+      settings.ip_session[s] = 0
       return cret(st)
     end
   end
   cret(code)
+end
+
+get '/code/:code' do
+  code(params)
+end
+
+post '/code/:code' do
+  code(params)
 end
 
 def cret(code, msg=nil)
