@@ -4,7 +4,7 @@ require 'sinatra'
 set :ip_session, {}
 
 get '/' do
-  "This is the Rest Test. Send requests to /code/X where X is the code you want returned."
+  "This is the Rest Test. See https://github.com/treeder/rest_test for info."
 end
 
 def code(params)
