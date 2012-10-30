@@ -1,10 +1,26 @@
 require 'sinatra'
+require 'uber_config'
+require 'iron_cache'
+require 'logger'
+
+CONFIG = UberConfig.load
+p CONFIG
+if CONFIG[:iron]
+  puts "Iron on board!"
+  IRON_CACHE = IronCache::Client.new(CONFIG[:iron])
+end
+LOGGER = Logger.new(STDOUT)
+LOGGER.level = Logger::INFO
 
 # enable :sessions
 set :ip_session, {}
 
+before do
+  @ip = request.ip
+end
+
 get '/' do
-  "This is the Rest Test. See https://github.com/treeder/rest_test for info."
+  "This is Rest Test. See <a href=\"https://github.com/treeder/rest_test\">https://github.com/treeder/rest_test</a> for info."
 end
 
 get '/code/:code' do
@@ -15,7 +31,22 @@ post '/code/:code' do
   code(params)
 end
 
+# Retrieves a stored value
+get '/stored/:key' do
+  check_cache
+  puts "key: #{params[:key]}"
+  IRON_CACHE.cache("requests").get(params[:key]).value
+end
+
 def code(params)
+  if params[:store]
+    puts "storing"
+    check_cache
+    body = request.body.read
+    cache_value = {body: body, url: request.url}
+    p cache_value
+    IRON_CACHE.cache("requests").put(params[:store], cache_value.to_json, expires_in: 3600)
+  end
   code = params[:code].to_i
   if params[:switch_after]
     sa = params[:switch_after].to_i
@@ -42,3 +73,8 @@ def cresp(code, msg=nil)
   [code, msg || "#{code}"]
 end
 
+def check_cache
+  unless IRON_CACHE
+    raise "NO CACHE FOUND!"
+  end
+end
