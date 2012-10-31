@@ -35,7 +35,11 @@ end
 get '/stored/:key' do
   check_cache
   puts "key: #{params[:key]}"
-  IRON_CACHE.cache("requests").get(params[:key]).value
+  item = IRON_CACHE.cache("requests").get(params[:key])
+  if item
+    return item.value
+  end
+  cresp 404, "No request stored at #{params[:key]}"
 end
 
 def code(params)

@@ -36,6 +36,12 @@ class MyUnitTest < Test::Unit::TestCase
     assert_equal xml, stored['body']
 
 
+    begin
+      r = rest.get("http://localhost:9292/stored/nothere")
+    rescue Rest::HttpError => ex
+      assert_equal 404, ex.code
+    end
+
   end
 
 end
