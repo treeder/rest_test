@@ -43,9 +43,9 @@ def code(params)
     puts "storing"
     check_cache
     body = request.body.read
-    p extract_headers
+    #p extract_headers
     cache_value = {body: body, url: request.url, headers: extract_headers}
-    p cache_value
+    #p cache_value
     IRON_CACHE.cache("requests").put(params[:store], cache_value.to_json, expires_in: 3600)
   end
   code = params[:code].to_i
