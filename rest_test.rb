@@ -43,7 +43,8 @@ def code(params)
     puts "storing"
     check_cache
     body = request.body.read
-    cache_value = {body: body, url: request.url}
+    p extract_headers
+    cache_value = {body: body, url: request.url, headers: extract_headers}
     p cache_value
     IRON_CACHE.cache("requests").put(params[:store], cache_value.to_json, expires_in: 3600)
   end
@@ -77,4 +78,13 @@ def check_cache
   unless IRON_CACHE
     raise "NO CACHE FOUND!"
   end
+end
+
+def extract_headers
+  headers = env.select {|k,v| k.start_with? 'HTTP_'}
+  .collect {|pair| [pair[0].sub(/^HTTP_/, ''), pair[1]]}
+  .collect {|pair| pair.join(": ") << "<br>"}
+  .sort
+  #[200, {'Content-Type' => 'text/html'}, headers]
+  headers
 end
