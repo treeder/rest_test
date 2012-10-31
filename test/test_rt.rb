@@ -5,7 +5,8 @@ class MyUnitTest < Test::Unit::TestCase
   def test_store
 
     rest = Rest::Client.new
-    rest.get("http://localhost:9292/code/200?store=test1")
+    r = rest.get("http://localhost:9292/code/200?store=test1")
+    assert_equal 200, r.code
 
     r = rest.get("http://localhost:9292/stored/test1")
 
