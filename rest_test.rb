@@ -31,6 +31,14 @@ post '/code/:code' do
   code(params)
 end
 
+post '/code/:code' do
+  code(params)
+end
+
+delete '/code/:code' do
+  code(params)
+end
+
 # Retrieves a stored value
 get '/stored/:key' do
   check_cache
