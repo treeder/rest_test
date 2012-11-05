@@ -31,7 +31,7 @@ post '/code/:code' do
   code(params)
 end
 
-post '/code/:code' do
+put '/code/:code' do
   code(params)
 end
 
