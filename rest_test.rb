@@ -43,11 +43,25 @@ end
 get '/stored/:key' do
   check_cache
   puts "key: #{params[:key]}"
-  item = IRON_CACHE.cache("requests").get(params[:key])
+  item = IRON_CACHE.cache(requests_cache_name).get(params[:key])
   if item
     return item.value
   end
   cresp 404, "No request stored at #{params[:key]}"
+end
+
+def sessions_cache_name
+  "sessions"
+end
+
+def requests_cache_name
+  "requests"
+end
+
+def namespace_key(params, s)
+  # default if no namespace
+  return s unless params[:namespace]
+  "#{params[:namespace]}::#{s}"
 end
 
 def code(params)
@@ -58,7 +72,7 @@ def code(params)
     #p extract_headers
     cache_value = {body: body, url: request.url, headers: extract_headers}
     #p cache_value
-    IRON_CACHE.cache("requests").put(params[:store], cache_value.to_json, expires_in: 3600)
+    IRON_CACHE.cache(requests_cache_name()).put(params[:store], cache_value.to_json, expires_in: 3600)
   end
   code = params[:code].to_i
   if params[:switch_after]
@@ -67,13 +81,17 @@ def code(params)
     return cresp(400, "switch_after must be greater than 1") if sa < 2
     return cresp(400, "switch_to must be valid http code") if st < 100 || st >= 600
     s = "code_#{code}_count"
-    settings.ip_session[s] ||= 0
-    settings.ip_session[s] += 1
-    puts "#{s}: #{settings.ip_session[s]}"
-    if settings.ip_session[s] >= sa
-      settings.ip_session[s] = 0
-      return cresp(st)
+    cache = IRON_CACHE.cache(sessions_cache_name)
+    hit_count = cache.get(namespace_key(params, s))
+    hit_count ||= 0
+    hit_count += 1
+    puts "#{namespace_key(params, s)}: #{hit_count}"
+    if hit_count >= sa
+      hit_count = 0
+      #return cresp(st)
+      code = st
     end
+    cache.put(namespace_key(params, s), hit_count, expires_in: 3600)
   end
   cresp(code)
 end
