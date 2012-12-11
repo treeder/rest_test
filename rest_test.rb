@@ -94,7 +94,7 @@ def code(params)
     end
     hit_count += 1
     puts "HIT COUNT: #{namespace_key(params, s)}: #{hit_count}"
-    if hit_count >= sa
+    if hit_count > sa
       hit_count = 0
       #return cresp(st)
       code = st
