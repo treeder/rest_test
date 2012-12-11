@@ -65,6 +65,7 @@ def namespace_key(params, s)
 end
 
 def code(params)
+  puts "IN CODE"
   if params[:store]
     puts "storing"
     check_cache
@@ -89,7 +90,7 @@ def code(params)
       hit_count = 0
     end
     hit_count += 1
-    puts "#{namespace_key(params, s)}: #{hit_count}"
+    puts "HIT COUNT: #{namespace_key(params, s)}: #{hit_count}"
     if hit_count >= sa
       hit_count = 0
       #return cresp(st)
