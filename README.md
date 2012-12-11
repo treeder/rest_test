@@ -21,5 +21,4 @@ params:
 
 TODO:
 
-* A way to validate headers
 * A way to validate parameters

@@ -83,7 +83,11 @@ def code(params)
     s = "code_#{code}_count"
     cache = IRON_CACHE.cache(sessions_cache_name)
     hit_count = cache.get(namespace_key(params, s))
-    hit_count ||= 0
+    if hit_count
+      hit_count = hit_count.value
+    else
+      hit_count = 0
+    end
     hit_count += 1
     puts "#{namespace_key(params, s)}: #{hit_count}"
     if hit_count >= sa
