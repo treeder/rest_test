@@ -12,6 +12,9 @@ end
 LOGGER = Logger.new(STDOUT)
 LOGGER.level = Logger::INFO
 
+# Seems to buffer stdout: https://groups.google.com/forum/?fromgroups=#!topic/heroku/NTTpcQlaM2A
+$stdout.sync = true
+
 # enable :sessions
 set :ip_session, {}
 
