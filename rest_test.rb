@@ -48,6 +48,7 @@ get '/stored/:key' do
   puts "key: #{params[:key]}"
   item = IRON_CACHE.cache(requests_cache_name).get(params[:key])
   if item
+    puts "item from cache: " + item.inspect
     return item.value
   end
   cresp 404, "No request stored at #{params[:key]}"
