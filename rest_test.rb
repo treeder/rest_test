@@ -122,8 +122,23 @@ end
 
 def extract_headers
   headers = {}
-  puts "rack env: #{env.inspect}"
-  env.select { |k, v| k.start_with? 'HTTP_' }.collect { |pair| headers[pair[0].sub(/^HTTP_/, '')] = pair[1] }
-  #[200, {'Content-Type' => 'text/html'}, headers]
+  # puts "rack env: #{env.inspect}"
+  env.select { |k, v| k.start_with? 'HTTP_' }.collect { |pair|
+    k = pair[0].sub(/^HTTP_/, '')
+    x = ""
+    k.split("_").each_with_index do |word, i|
+      x += "-" if i > 0
+      x += word.capitalize
+    end
+    # now reformat into what they should be since rack maims the headers
+    headers[x] = pair[1]
+  }
+  headers.each_pair do |k,v|
+
+  end
+  h = headers['CONTENT_TYPE']
+  headers['Content-Type'] = h if h
+  h = headers['CONTENT_LENGTH']
+  headers['Content-Length'] = h if h
   headers
 end
