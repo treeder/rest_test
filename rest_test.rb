@@ -45,10 +45,10 @@ end
 # Retrieves a stored value
 get '/stored/:key' do
   check_cache
-  puts "key: #{params[:key]}"
+  #puts "key: #{params[:key]}"
   item = IRON_CACHE.cache(requests_cache_name).get(params[:key])
   if item
-    puts "item from cache: " + item.value.inspect
+    #puts "item from cache: " + item.value.inspect
     return item.value
   end
   cresp 404, "No request stored at #{params[:key]}"
@@ -77,7 +77,7 @@ def code(params)
     #p extract_headers
     cache_value = {body: body, url: request.url, headers: extract_headers}
     #p cache_value
-    puts "Storing at #{params[:store]} value: #{cache_value.inspect}"
+    #puts "Storing at #{params[:store]} value: #{cache_value.inspect}"
     IRON_CACHE.cache(requests_cache_name()).put(params[:store], cache_value.to_json, expires_in: 3600)
   end
   code = params[:code].to_i
@@ -122,7 +122,7 @@ end
 
 def extract_headers
   headers = {}
-  puts "rack env: #{env.inspect}"
+  #puts "rack env: #{env.inspect}"
   env.select { |k, v| k.start_with? 'HTTP_' }.collect { |pair|
     k = pair[0].sub(/^HTTP_/, '')
     x = ""
@@ -134,7 +134,7 @@ def extract_headers
     headers[x] = pair[1]
   }
   h = env['CONTENT_TYPE']
-  puts "setting content-type to #{h}"
+  #puts "setting content-type to #{h}"
   headers['Content-Type'] = h if h
   h = env['CONTENT_LENGTH']
   headers['Content-Length'] = h if h
