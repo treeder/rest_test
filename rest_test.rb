@@ -122,7 +122,7 @@ end
 
 def extract_headers
   headers = {}
-  # puts "rack env: #{env.inspect}"
+  puts "rack env: #{env.inspect}"
   env.select { |k, v| k.start_with? 'HTTP_' }.collect { |pair|
     k = pair[0].sub(/^HTTP_/, '')
     x = ""
@@ -133,10 +133,8 @@ def extract_headers
     # now reformat into what they should be since rack maims the headers
     headers[x] = pair[1]
   }
-  headers.each_pair do |k,v|
-
-  end
   h = headers['CONTENT_TYPE']
+  puts "setting content-type to #{h}"
   headers['Content-Type'] = h if h
   h = headers['CONTENT_LENGTH']
   headers['Content-Length'] = h if h
