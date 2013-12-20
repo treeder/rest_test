@@ -133,10 +133,10 @@ def extract_headers
     # now reformat into what they should be since rack maims the headers
     headers[x] = pair[1]
   }
-  h = headers['CONTENT_TYPE']
+  h = env['CONTENT_TYPE']
   puts "setting content-type to #{h}"
   headers['Content-Type'] = h if h
-  h = headers['CONTENT_LENGTH']
+  h = env['CONTENT_LENGTH']
   headers['Content-Length'] = h if h
   headers
 end
