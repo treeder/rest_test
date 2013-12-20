@@ -122,6 +122,7 @@ end
 
 def extract_headers
   headers = {}
+  puts "rack env: #{env.inspect}"
   env.select { |k, v| k.start_with? 'HTTP_' }.collect { |pair| headers[pair[0].sub(/^HTTP_/, '')] = pair[1] }
   #[200, {'Content-Type' => 'text/html'}, headers]
   headers
